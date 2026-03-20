@@ -9,3 +9,17 @@
     --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';
 }
+
+H1{
+    font-size: 32px;
+}
+H2{
+    font-size: 1.5em;
+}
+H3{
+    font-size: 1.17;
+}
+
+H1,H2,H3{
+    margin-bottom: 0.5em;
+}
