@@ -2,11 +2,18 @@
 
     <h1>ISBN Book Lookup</h1>
 
+    <!-- Sample data -->
+    <p class="mb-2">A couple of ISBN's for testing:</p>
+    <p class="mb-2">
+        9781451648546<br>
+        9780007259762<br>
+    </p>
+
     <!-- Form -->
     <form wire:submit.prevent="lookup" class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
         <div class="mb-4">
             <label class="block text-gray-700 text-sm font-bold mb-2" for="isbn">
-                Isbn
+                ISBN
             </label>
             <input id="isbn" name="isbn" type="text" wire:model="isbn" placeholder="Enter ISBN" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
             @error('isbn')
@@ -14,12 +21,15 @@
             @enderror
         </div>
         <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="button">Search</button>
+        <button wire:click="clearResults" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="button">Clear</button>
     </form>
 
     <!-- Error messages -->
-    @if($error)
-        <p>{{ $error }}</p>
-    @endif
+    <div wire:loading.remove>
+        @if($error)
+            <p>{{ $error }}</p>
+        @endif
+    </div>
 
     <!-- Loading -->
     <div wire:loading wire:target="lookup">

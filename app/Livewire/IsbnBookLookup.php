@@ -34,10 +34,28 @@ class IsbnBookLookup extends Component
         ];
     }
 
+    // Clear reasult card
+    public function clearResults()
+    {
+        $this->book = [];
+        $this->isbn = '';
+
+        $this->clearErrors();
+    }
+
+    // Clear validation errors
+    public function clearErrors()
+    {
+        $this->error = '';
+        $this->resetErrorBag();
+        $this->resetValidation();
+    }
+
     // Form submit
     public function lookup(GoogleBooksService $service)
     {
-        $this->book = [];
+        $this->reset(['book']);
+        $this->clearErrors();
 
         $this->validate();
 
@@ -48,7 +66,7 @@ class IsbnBookLookup extends Component
             return;
         }
 
-        $this->book=$result;
+        $this->book=$result?->toArray();
 
     }
 
@@ -58,3 +76,4 @@ class IsbnBookLookup extends Component
         return view('livewire.isbn-book-lookup')->layout('layouts.layout');
     }
 }
+
