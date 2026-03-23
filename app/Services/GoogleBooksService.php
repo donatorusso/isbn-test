@@ -5,7 +5,9 @@ namespace App\Services;
 use Exception;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Cache;
+
 use App\DTO\BookData;
+use App\DTO\ApiResponse;
 
 class GoogleBooksService
 {
@@ -17,7 +19,7 @@ class GoogleBooksService
     }
 
     // Search a book by its ISBN
-    public function searchByIsbn(string $isbn): ?BookData
+    public function searchByIsbn(string $isbn): ?ApiResponse
     {
         try{
 
@@ -29,19 +31,21 @@ class GoogleBooksService
 
                 // If API call fail
                 if($response->failed()){
-                    return null;
+                    return ApiResponse::error("Something went wrong. Please try again later.", null);
+                    Cache::forget($isbn);
                 }
 
                 $data = $response->json();
 
                 // If API call return empty data
                 if (empty($data['items'][0]['volumeInfo'])) {
-                    return null;
+                    return ApiResponse::error("Book not foundd.", null);
+                    Cache::forget($isbn);
                 }
 
                 $book = $data['items'][0]['volumeInfo'];
 
-                return BookData::googleBooks($book);
+                return ApiResponse::success('Book found', BookData::googleBooks($book));
 
             });
         }catch (\Illuminate\Http\Client\ConnectionException $e) {
@@ -51,7 +55,7 @@ class GoogleBooksService
                 'error' => $e->getMessage(),
             ]);
 
-            return null;
+            return ApiResponse::error('Connection error. Please try again later.', null);
 
         } catch (Exception $e) {
             // Generic exception
@@ -60,7 +64,7 @@ class GoogleBooksService
                 'error' => $e->getMessage(),
             ]);
 
-            return null;
+            return ApiResponse::error('An unexpected error occurred. Please try again later.', null);
 
         }
     }

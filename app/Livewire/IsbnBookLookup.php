@@ -61,12 +61,12 @@ class IsbnBookLookup extends Component
 
         $result = $service->searchByIsbn($this->isbn);
 
-        if(!$result){
-            $this->error = "Book not found";
+        if(!$result->isSuccess()){
+            $this->error = $result->message;
             return;
         }
 
-        $this->book=$result?->toArray();
+        $this->book=$result->data ? $result->data->toArray() : null;
 
     }
 

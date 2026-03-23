@@ -20,6 +20,7 @@ class GoogleBookServiceTest extends TestCase
                             'authors' => ['Donato Russo','John Doe'],
                             'publishedDate' => '2026',
                             'description' => 'Test description',
+                            'isbn' => '1234567890'
                         ]
                     ]
                 ]
@@ -29,9 +30,13 @@ class GoogleBookServiceTest extends TestCase
 
         $service = new GoogleBooksService();
 
-        $result = $service->searchByIsbn('1234567890');
+        $response = $service->searchByIsbn('1234567890');
 
-        $this->assertIsArray($result);
+        $this->assertNotNull($response);
+        $this->assertTrue($response->isSuccess());
+
+        $result = $response->data->toArray();
+
         $this->assertEquals('Test', $result['title']);
         $this->assertEquals(['Donato Russo','John Doe'], $result['authors']);
         $this->assertEquals('2026', $result['published_date']);
