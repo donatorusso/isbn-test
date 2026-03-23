@@ -5,6 +5,7 @@ namespace App\Services;
 use Exception;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\RateLimiter;
 
 use App\DTO\BookData;
 use App\DTO\ApiResponse;
@@ -21,6 +22,17 @@ class GoogleBooksService
     // Search a book by its ISBN
     public function searchByIsbn(string $isbn): ?ApiResponse
     {
+
+
+        $attempt = 'Search-attempt-'.request()->ip;
+
+        // Rate limiter: max 10 attampts per minute
+        if(RateLimiter::tooManyAttempts($attempt, $perMinute = 10)){
+            return ApiResponse::error('Too many requests! Please try again later.', null);
+        }
+
+        RateLimiter::hit($attempt, 60);
+
         try{
 
             return Cache::remember($isbn, 3600, function() use ($isbn){
