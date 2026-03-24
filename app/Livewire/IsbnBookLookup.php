@@ -12,23 +12,25 @@ class IsbnBookLookup extends Component
     public ?array $book = null;
     public ?string $error = null;
 
+    protected const ISBN_REGEX = '/^(?:ISBN(?:-1[03])?:? )?(?=[0-9X]{10}$|(?=(?:[0-9]+[- ]){3})[- 0-9X]{13}$|97[89][0-9]{10}$|(?=(?:[0-9]+[- ]){4})[- 0-9]{17}$)(?:97[89][- ]?)?[0-9]{1,5}[- ]?[0-9]+[- ]?[0-9]+[- ]?[0-9X]$/';
+    protected const ISBN_REGEX_PREFIX = '/^\s*ISBN(-10|-13)?\s*:?\s*/';
+
     // Validation rules
     public function rules()
     {
         return [
             'isbn' =>[
                 'required', function($attribute, $value, $fail){
-                    $normalised_isbn = str_replace(['-',' '], '', $value);
-                    /* Just checking the lenght of the isbn
-                    * Must be between 9 (old format) and 13 (new format)
-                    */
-                    if(strlen($normalised_isbn) < 9 || strlen($normalised_isbn) >13){
-                        $fail('The '.$attribute. ' must be between 9 and 13 characters.');
+
+                    // check ISBN format with regex
+                    if(!preg_match(self::ISBN_REGEX, trim($value))){
+                        $fail('The '.$attribute. ' must be a valid format.');
+                    }else{
+                        // if ISBN match regex, remove prefix if any
+                        $normalised_isbn = preg_replace(self::ISBN_REGEX_PREFIX, '', $value);
+                        $this->isbn = $normalised_isbn;
                     }
 
-                    /* Future improvements:
-                    *  add a regex to check the format
-                    */
                 }
             ]
         ];

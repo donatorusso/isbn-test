@@ -3,10 +3,13 @@
     <h1>ISBN Book Lookup</h1>
 
     <!-- Sample data -->
-    <p class="mb-2">A couple of ISBN's for testing:</p>
+    <p class="mb-2">A few ISBN's for testing:</p>
     <p class="mb-2">
         9781451648546<br>
         9780007259762<br>
+        ISBN 978-0-596-52068-7<br>
+        ISBN-13: 978-0-596-52068-7<br>
+
     </p>
 
     <!-- Form -->
