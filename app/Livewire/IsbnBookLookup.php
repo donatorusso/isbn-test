@@ -3,7 +3,7 @@
 namespace App\Livewire;
 
 use Livewire\Component;
-use App\Services\GoogleBooksService;
+use App\Interfaces\BookServiceInterface;
 use App\DTO\BookData;
 
 class IsbnBookLookup extends Component
@@ -52,7 +52,7 @@ class IsbnBookLookup extends Component
     }
 
     // Form submit
-    public function lookup(GoogleBooksService $service)
+    public function lookup(BookServiceInterface $service)
     {
         $this->reset(['book']);
         $this->clearErrors();

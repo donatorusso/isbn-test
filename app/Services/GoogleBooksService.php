@@ -9,22 +9,23 @@ use Illuminate\Support\Facades\RateLimiter;
 
 use App\DTO\BookData;
 use App\DTO\ApiResponse;
+use App\Interfaces\BookServiceInterface;
 
-class GoogleBooksService
+class GoogleBooksService implements BookServiceInterface
 {
     protected string $baseUrl;
+    protected string $apiKey;
 
-    public function __construct()
+    public function __construct(string $baseUrl, string $apiKey)
     {
-        $this->baseUrl= config('services.google_books.url');
+        $this->baseUrl = $baseUrl;
+        $this->apiKey = $apiKey;
     }
 
     // Search a book by its ISBN
     public function searchByIsbn(string $isbn): ?ApiResponse
     {
-
-
-        $attempt = 'Search-attempt-'.request()->ip;
+        $attempt = 'Search-attempt-'.request()->ip();
 
         // Rate limiter: max 10 attampts per minute
         if(RateLimiter::tooManyAttempts($attempt, $perMinute = 10)){
@@ -38,7 +39,7 @@ class GoogleBooksService
             return Cache::remember($isbn, 3600, function() use ($isbn){
                 $response = Http::get($this->baseUrl, [
                     'q' => 'isbn:' . $isbn,
-                    'key' => config('services.google_books.key'),
+                    'key' => $this->apiKey,
                 ]);
 
                 // If API call fail
@@ -51,7 +52,7 @@ class GoogleBooksService
 
                 // If API call return empty data
                 if (empty($data['items'][0]['volumeInfo'])) {
-                    return ApiResponse::error("Book not foundd.", null);
+                    return ApiResponse::error("Book not found.", null);
                     Cache::forget($isbn);
                 }
 

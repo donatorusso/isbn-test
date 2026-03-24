@@ -28,7 +28,10 @@ class GoogleBookServiceTest extends TestCase
 
         ]);
 
-        $service = new GoogleBooksService();
+        $service = new GoogleBooksService(
+            config('services.google_books.url'),
+            config('services.google_books.key')
+        );
 
         $response = $service->searchByIsbn('1234567890');
 
