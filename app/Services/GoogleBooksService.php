@@ -44,16 +44,16 @@ class GoogleBooksService implements BookServiceInterface
 
                 // If API call fail
                 if($response->failed()){
-                    return ApiResponse::error("Something went wrong. Please try again later.", null);
                     Cache::forget($isbn);
+                    return ApiResponse::error("Something went wrong. Please try again later.", null);
                 }
 
                 $data = $response->json();
 
                 // If API call return empty data
                 if (empty($data['items'][0]['volumeInfo'])) {
-                    return ApiResponse::error("Book not found.", null);
                     Cache::forget($isbn);
+                    return ApiResponse::error("Book not found.", null);
                 }
 
                 $book = $data['items'][0]['volumeInfo'];
